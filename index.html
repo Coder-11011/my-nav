@@ -1,0 +1,361 @@
+你提到的网站 navboard.10125800.xyz 实际上是基于开源项目 WebStack 或者其变种（如 WebStack-Hugo、OneNav 等）搭建的。这是目前最流行的“左侧侧边栏 + 右侧卡片流”布局，非常适合用来整理大量的学习资源。
+
+为了让你能最快上手，我为你设计了一个单文件版本（Single HTML）。你不需要安装复杂的 Docker 或 Node.js，只需要把下面的代码保存为 index.html，双击就能打开，稍后也可以免费部署到 GitHub Pages。
+
+我已经按照你的要求，在“阅读学习”分类下，预设了剪辑、调色、音效这三个子类目和相关资源。
+
+🚀 你的专属导航站代码
+
+请新建一个文本文件，重命名为 index.html，将以下代码完全复制进去：
+
+code
+Html
+play_circle
+download
+content_copy
+expand_less
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>我的个人导航 - 学习与创作中心</title>
+    <style>
+        :root {
+            --sidebar-width: 220px;
+            --bg-color: #f4f4f4;
+            --card-bg: #ffffff;
+            --text-main: #333;
+            --text-sub: #888;
+            --accent-color: #2c3e50;
+            --hover-color: #3498db;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; background: var(--bg-color); color: var(--text-main); display: flex; height: 100vh; overflow: hidden; }
+        a { text-decoration: none; color: inherit; }
+
+        /* 侧边栏样式 */
+        .sidebar {
+            width: var(--sidebar-width);
+            background: #fff;
+            border-right: 1px solid #e0e0e0;
+            display: flex;
+            flex-direction: column;
+            padding: 20px 0;
+            overflow-y: auto;
+            flex-shrink: 0;
+        }
+        .logo { font-size: 20px; font-weight: bold; text-align: center; margin-bottom: 30px; color: var(--accent-color); }
+        .menu-item {
+            padding: 12px 24px;
+            cursor: pointer;
+            transition: 0.2s;
+            font-size: 15px;
+            color: #555;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .menu-item:hover, .menu-item.active { background: #f0f7ff; color: var(--hover-color); border-right: 3px solid var(--hover-color); }
+
+        /* 主内容区域 */
+        .main-content {
+            flex: 1;
+            padding: 30px 40px;
+            overflow-y: auto;
+            scroll-behavior: smooth;
+        }
+
+        /* 搜索框 */
+        .search-container { margin-bottom: 40px; max-width: 600px; }
+        .search-box {
+            width: 100%;
+            padding: 12px 20px;
+            border-radius: 50px;
+            border: 1px solid #ddd;
+            outline: none;
+            font-size: 16px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            transition: 0.3s;
+        }
+        .search-box:focus { border-color: var(--hover-color); box-shadow: 0 4px 15px rgba(52, 152, 219, 0.2); }
+
+        /* 分类区块 */
+        .category-section { margin-bottom: 50px; }
+        .category-title {
+            font-size: 20px;
+            margin-bottom: 20px;
+            border-left: 4px solid var(--hover-color);
+            padding-left: 12px;
+            display: flex;
+            align-items: center;
+            color: var(--accent-color);
+        }
+        
+        /* 子分类标签（Tag风格） */
+        .sub-category-tag {
+            display: inline-block;
+            background: #e1ecf4;
+            color: #2c3e50;
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 13px;
+            margin-bottom: 15px;
+            font-weight: bold;
+        }
+
+        /* 卡片网格 */
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 20px;
+        }
+
+        /* 卡片样式 */
+        .card {
+            background: var(--card-bg);
+            border-radius: 8px;
+            padding: 15px;
+            transition: all 0.3s ease;
+            border: 1px solid transparent;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.08);
+            border-color: #bce0fd;
+        }
+        .card-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: #f0f0f0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            flex-shrink: 0;
+        }
+        .card-info { overflow: hidden; }
+        .card-title { font-weight: 600; font-size: 14px; margin-bottom: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .card-desc { font-size: 12px; color: var(--text-sub); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+        /* 响应式适配 */
+        @media (max-width: 768px) {
+            body { flex-direction: column; }
+            .sidebar { width: 100%; height: auto; padding: 10px; flex-direction: row; overflow-x: auto; border-right: none; border-bottom: 1px solid #eee; }
+            .menu-item { padding: 8px 15px; white-space: nowrap; border-right: none; border-bottom: 3px solid transparent; }
+            .menu-item:hover, .menu-item.active { border-right: none; border-bottom-color: var(--hover-color); }
+            .main-content { padding: 20px; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 侧边栏菜单 -->
+    <div class="sidebar" id="sidebar">
+        <div class="logo">📚 学习导航</div>
+        <!-- JavaScript 将自动填充菜单 -->
+    </div>
+
+    <!-- 主内容 -->
+    <div class="main-content">
+        <div class="search-container">
+            <input type="text" class="search-box" placeholder="Search Google / 站内搜索..." onkeydown="handleSearch(event)">
+        </div>
+        <div id="content-area">
+            <!-- JavaScript 将自动填充卡片 -->
+        </div>
+    </div>
+
+    <script>
+        // ==========================================
+        // 💡 在这里配置你的数据 (JSON格式)
+        // ==========================================
+        const navData = [
+            {
+                category: "阅读学习",
+                icon: "📖",
+                id: "reading",
+                subGroups: [
+                    {
+                        name: "✂️ 视频剪辑 (Editing)",
+                        links: [
+                            { title: "剪映专业版", desc: "轻量高效的剪辑工具", url: "https://www.capcut.cn/" },
+                            { title: "DaVinci Resolve", desc: "好莱坞级调色剪辑全能", url: "https://www.blackmagicdesign.com/products/davinciresolve" },
+                            { title: "新片场", desc: "国内优秀的创作人社区", url: "https://www.xinpianchang.com/" },
+                            { title: "Premiere Pro", desc: "Adobe专业剪辑", url: "https://www.adobe.com/products/premiere.html" }
+                        ]
+                    },
+                    {
+                        name: "🎨 画面调色 (Color Grading)",
+                        links: [
+                            { title: "FilmConvert", desc: "胶片颗粒与质感插件", url: "https://www.filmconvert.com/" },
+                            { title: "ShotDeck", desc: "电影级参考图库", url: "https://shotdeck.com/" },
+                            { title: "Color.io", desc: "在线LUT生成与调色", url: "https://color.io/" }
+                        ]
+                    },
+                    {
+                        name: "🔊 音效配乐 (Sound FX)",
+                        links: [
+                            { title: "Freesound", desc: "全球最大的免费音效库", url: "https://freesound.org/" },
+                            { title: "淘声网", desc: "声音搜索引擎", url: "https://www.tosound.com/" },
+                            { title: "耳聆网", desc: "国内专业的音效平台", url: "https://www.ear0.com/" }
+                        ]
+                    }
+                ]
+            },
+            {
+                category: "常用工具",
+                icon: "🛠️",
+                id: "tools",
+                subGroups: [
+                    {
+                        name: "效率办公",
+                        links: [
+                            { title: "ChatGPT", desc: "AI 助手", url: "https://chatgpt.com" },
+                            { title: "Notion", desc: "全能笔记", url: "https://www.notion.so" },
+                            { title: "Google Translate", desc: "在线翻译", url: "https://translate.google.com" }
+                        ]
+                    }
+                ]
+            },
+            {
+                category: "娱乐摸鱼",
+                icon: "🎮",
+                id: "fun",
+                subGroups: [
+                    {
+                        name: "视频流媒体",
+                        links: [
+                            { title: "Bilibili", desc: "干杯", url: "https://www.bilibili.com" },
+                            { title: "YouTube", desc: "探索世界", url: "https://www.youtube.com" }
+                        ]
+                    }
+                ]
+            }
+        ];
+
+        // ==========================================
+        // 🔧 核心逻辑 (通常不需要修改)
+        // ==========================================
+        
+        function renderSite() {
+            const sidebar = document.getElementById('sidebar');
+            const content = document.getElementById('content-area');
+
+            navData.forEach((group, index) => {
+                // 1. 渲染侧边栏菜单
+                const menuLink = document.createElement('div');
+                menuLink.className = `menu-item ${index === 0 ? 'active' : ''}`;
+                menuLink.innerHTML = `${group.icon} ${group.category}`;
+                menuLink.onclick = () => {
+                    document.getElementById(`cat-${group.id}`).scrollIntoView({ behavior: 'smooth' });
+                    // 更新激活状态
+                    document.querySelectorAll('.menu-item').forEach(el => el.classList.remove('active'));
+                    menuLink.classList.add('active');
+                };
+                sidebar.appendChild(menuLink);
+
+                // 2. 渲染主内容区
+                const section = document.createElement('div');
+                section.className = 'category-section';
+                section.id = `cat-${group.id}`;
+                
+                let sectionHTML = `<div class="category-title">${group.icon} ${group.category}</div>`;
+                
+                group.subGroups.forEach(sub => {
+                    sectionHTML += `<div class="sub-category-tag">${sub.name}</div>`;
+                    sectionHTML += `<div class="card-grid">`;
+                    
+                    sub.links.forEach(link => {
+                        // 自动获取简单的Favicon (使用Google API)
+                        const favicon = `https://www.google.com/s2/favicons?domain=${link.url}&sz=32`;
+                        
+                        sectionHTML += `
+                            <a href="${link.url}" target="_blank" class="card">
+                                <div class="card-icon">
+                                    <img src="${favicon}" style="width:16px;height:16px;" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZmlsbD0iI2NjYyIgZD0iTTEyIDJDNi40OCAyIDIgNi40OCAyIDEyczQuNDggMTAgMTAgMTAgMTAtNC40OCAxMC0xMFMxNy41MiAyIDEyIDJ6bS0xIDE3LjkzYy0zLjk1LS40OS03LTMuODUtNy03LjkzIDAtNC40MSAzLjU5LTggOC04djE1LjkzeiIvPjwvc3ZnPg=='">
+                                </div>
+                                <div class="card-info">
+                                    <div class="card-title">${link.title}</div>
+                                    <div class="card-desc">${link.desc}</div>
+                                </div>
+                            </a>
+                        `;
+                    });
+                    
+                    sectionHTML += `</div><br>`; // 结束Grid
+                });
+
+                section.innerHTML = sectionHTML;
+                content.appendChild(section);
+            });
+        }
+
+        function handleSearch(e) {
+            if (e.key === 'Enter') {
+                window.open(`https://www.google.com/search?q=${e.target.value}`, '_blank');
+            }
+        }
+
+        // 启动渲染
+        renderSite();
+
+    </script>
+</body>
+</html>
+💡 如何使用和修改？
+
+数据管理（核心部分）：
+
+打开代码，找到 const navData = [...] 这一段。
+
+这是网站的“数据库”。
+
+我已经帮你配置好了 subGroups 结构。如果你想添加新的书签，只需要在对应的 links 数组里复制一行：
+
+code
+JavaScript
+download
+content_copy
+expand_less
+{ title: "网站名称", desc: "简短介绍", url: "https://网址..." },
+
+图标功能：我内置了一个自动抓取 Google Favicon 的功能，只要填入网址，图标会自动显示，无需你手动找图。
+
+如何增加新的“大分类”？
+
+复制整个 { category: "...", ... } 的大括号块，粘贴在后面即可。
+
+视觉设计思路（仿 NavBoard）：
+
+布局： 采用了经典的左右结构（Sidebar + Content）。
+
+层级： 为了满足你的需求，我在设计上特意做成了 分类 -> 子分类 (Sub-Group) -> 卡片 的三级结构。
+
+样式： 卡片带有阴影和微动效，看起来很现代，不会觉得简陋。
+
+进阶：如何让别人也能访问？（免费部署）
+
+目前这个文件只能在你电脑上打开。如果你想让它像 navboard.10125800.xyz 一样拥有一个网址：
+
+注册一个 GitHub 账号。
+
+创建一个新仓库（Repository），名字随意，比如 my-nav。
+
+将这个 index.html 文件上传上去。
+
+进入仓库的 Settings -> Pages，在 Branch 处选择 main 并保存。
+
+过几分钟，GitHub 会给你一个免费的网址（如 username.github.io/my-nav），你就可以把它分享给朋友，或者设为浏览器主页了。
+
+Google Search Suggestions
+Display of Search Suggestions is required when using Grounding with Google Search. Learn more
+WebStack 导航站源码
+navboard.10125800.xyz
+类似于 WebStack 的个人导航页设计
