@@ -1,19 +1,3 @@
-你提到的网站 navboard.10125800.xyz 实际上是基于开源项目 WebStack 或者其变种（如 WebStack-Hugo、OneNav 等）搭建的。这是目前最流行的“左侧侧边栏 + 右侧卡片流”布局，非常适合用来整理大量的学习资源。
-
-为了让你能最快上手，我为你设计了一个单文件版本（Single HTML）。你不需要安装复杂的 Docker 或 Node.js，只需要把下面的代码保存为 index.html，双击就能打开，稍后也可以免费部署到 GitHub Pages。
-
-我已经按照你的要求，在“阅读学习”分类下，预设了剪辑、调色、音效这三个子类目和相关资源。
-
-🚀 你的专属导航站代码
-
-请新建一个文本文件，重命名为 index.html，将以下代码完全复制进去：
-
-code
-Html
-play_circle
-download
-content_copy
-expand_less
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
@@ -309,53 +293,5 @@ expand_less
     </script>
 </body>
 </html>
-💡 如何使用和修改？
 
-数据管理（核心部分）：
-
-打开代码，找到 const navData = [...] 这一段。
-
-这是网站的“数据库”。
-
-我已经帮你配置好了 subGroups 结构。如果你想添加新的书签，只需要在对应的 links 数组里复制一行：
-
-code
-JavaScript
-download
-content_copy
-expand_less
-{ title: "网站名称", desc: "简短介绍", url: "https://网址..." },
-
-图标功能：我内置了一个自动抓取 Google Favicon 的功能，只要填入网址，图标会自动显示，无需你手动找图。
-
-如何增加新的“大分类”？
-
-复制整个 { category: "...", ... } 的大括号块，粘贴在后面即可。
-
-视觉设计思路（仿 NavBoard）：
-
-布局： 采用了经典的左右结构（Sidebar + Content）。
-
-层级： 为了满足你的需求，我在设计上特意做成了 分类 -> 子分类 (Sub-Group) -> 卡片 的三级结构。
-
-样式： 卡片带有阴影和微动效，看起来很现代，不会觉得简陋。
-
-进阶：如何让别人也能访问？（免费部署）
-
-目前这个文件只能在你电脑上打开。如果你想让它像 navboard.10125800.xyz 一样拥有一个网址：
-
-注册一个 GitHub 账号。
-
-创建一个新仓库（Repository），名字随意，比如 my-nav。
-
-将这个 index.html 文件上传上去。
-
-进入仓库的 Settings -> Pages，在 Branch 处选择 main 并保存。
-
-过几分钟，GitHub 会给你一个免费的网址（如 username.github.io/my-nav），你就可以把它分享给朋友，或者设为浏览器主页了。
-
-Google Search Suggestions
-Display of Search Suggestions is required when using Grounding with Google Search. Learn more
-WebStack 导航站源码
-navboard.10125800.xyz
 类似于 WebStack 的个人导航页设计
